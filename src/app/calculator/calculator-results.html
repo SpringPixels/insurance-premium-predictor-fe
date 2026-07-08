@@ -1,0 +1,37 @@
+<main class="min-h-screen bg-slate-50 pb-20">
+  <section class="bg-blue-900 text-white py-16 px-6 relative overflow-hidden">
+    <div class="absolute inset-0 bg-[url('/Types_of_Family_Health_Insurance_in_India.jpg')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-blue-900 via-blue-900/80 to-transparent"></div>
+    <div class="max-w-4xl mx-auto relative z-10 text-center">
+      <div class="w-16 h-1.5 bg-yellow-400 mx-auto mb-6 rounded-full shadow-lg"></div>
+      <h1 class="text-5xl font-extrabold mb-4">Your Results</h1>
+    </div>
+  </section>
+
+  <section class="max-w-3xl mx-auto px-6 -mt-10 relative z-20">
+    <mat-card class="p-8 shadow-2xl rounded-3xl border border-slate-100 bg-white">
+      <div class="text-center py-10 flex flex-col items-center">
+        <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6">
+          <span class="text-5xl text-green-600">✓</span>
+        </div>
+        <h2 class="text-3xl font-bold text-slate-900 mb-2">Hello {{ name() }}, here is your estimate</h2>
+        <p class="text-slate-500 mb-8">Based on our AI analysis of your health profile</p>
+        
+        <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-8 mb-8 w-full max-w-sm relative">
+          <p class="text-sm text-blue-800 font-bold uppercase tracking-wider mb-2">Yearly Premium</p>
+          <p class="text-6xl font-extrabold text-blue-900">₹{{ premium() | number }}</p>
+          <p class="text-blue-600 mt-2 font-medium">Excluding applicable taxes (18% GST)</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 items-center mt-4">
+          <button mat-stroked-button color="primary" (click)="recalculate()" class="!px-10 !py-6 text-lg">
+            Recalculate
+          </button>
+          <button mat-flat-button color="primary" routerLink="/register" class="!px-10 !py-6 text-lg">
+            Proceed to Buy
+          </button>
+        </div>
+      </div>
+    </mat-card>
+  </section>
+</main>

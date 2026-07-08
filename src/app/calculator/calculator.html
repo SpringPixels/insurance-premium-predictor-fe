@@ -1,0 +1,150 @@
+<main class="min-h-screen bg-slate-50 pb-20">
+  <!-- Hero Section -->
+  <section class="bg-blue-900 text-white py-16 px-6 relative overflow-hidden">
+    <div
+      class="absolute inset-0 bg-[url('/Types_of_Family_Health_Insurance_in_India.jpg')] bg-cover bg-center opacity-20 mix-blend-overlay">
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-r from-blue-900 via-blue-900/80 to-transparent"></div>
+    <div class="max-w-4xl mx-auto relative z-10 text-center">
+      <div class="w-16 h-1.5 bg-yellow-400 mx-auto mb-6 rounded-full shadow-lg"></div>
+      <h1 class="text-5xl font-extrabold mb-4">AI Premium Calculator</h1>
+      <p class="text-xl text-blue-100 max-w-2xl mx-auto">
+        Discover your estimated yearly premium in seconds. Answer a few simple questions and let our AI calculate your
+        personalized health guard.
+      </p>
+    </div>
+  </section>
+
+  <!-- Content Section -->
+  <section class="max-w-3xl mx-auto px-6 -mt-10 relative z-20">
+    <mat-card class="p-8 shadow-2xl rounded-3xl border border-slate-100 bg-white">
+
+      <div class="mb-8 border-b border-slate-200 pb-6">
+        <h2 class="text-3xl font-bold text-slate-900">Personal Details</h2>
+        <p class="text-slate-500">Provide accurate details for the best estimate.</p>
+      </div>
+
+      @let name = calcForm.name;
+      @let age = calcForm.age;
+      @let weight = calcForm.weight;
+      @let height = calcForm.height;
+      @let incomeLpa = calcForm.incomeLpa;
+      @let isSmoker = calcForm.isSmoker;
+      @let city = calcForm.city;
+      @let occupation = calcForm.occupation;
+
+      <form class="flex flex-col gap-4" [formRoot]="calcForm" (submit)="calculate()">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Name -->
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Full Name</mat-label>
+            <input matInput [formField]="calcForm.name" type="text" placeholder="e.g. John Doe" />
+            <mat-hint class="text-red-500">
+              @if (name().errors() && name().touched()) {
+              @for (error of name().errors(); track error.kind) { {{ error.message }} }
+              }
+            </mat-hint>
+          </mat-form-field>
+
+          <!-- Age -->
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Age (Years)</mat-label>
+            <input matInput [formField]="calcForm.age" type="number" placeholder="e.g. 35" />
+            <mat-hint class="text-red-500">
+              @if (age().errors() && age().touched()) {
+              @for (error of age().errors(); track error.kind) { {{ error.message }} }
+              }
+            </mat-hint>
+          </mat-form-field>
+
+          <!-- Income -->
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Income (LPA)</mat-label>
+            <input matInput [formField]="calcForm.incomeLpa" type="number" placeholder="e.g. 12" />
+            <mat-hint class="text-red-500">
+              @if (incomeLpa().errors() && incomeLpa().touched()) {
+              @for (error of incomeLpa().errors(); track error.kind) { {{ error.message }} }
+              }
+            </mat-hint>
+          </mat-form-field>
+
+          <!-- Weight -->
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Weight (kg)</mat-label>
+            <input matInput [formField]="calcForm.weight" type="number" placeholder="e.g. 75" />
+            <mat-hint class="text-red-500">
+              @if (weight().errors() && weight().touched()) {
+              @for (error of weight().errors(); track error.kind) { {{ error.message }} }
+              }
+            </mat-hint>
+          </mat-form-field>
+
+          <!-- Height -->
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Height (Meters)</mat-label>
+            <input matInput [formField]="calcForm.height" type="number" step="0.01" placeholder="e.g. 1.75" />
+            <mat-hint class="text-red-500">
+              @if (height().errors() && height().touched()) {
+              @for (error of height().errors(); track error.kind) { {{ error.message }} }
+              }
+            </mat-hint>
+          </mat-form-field>
+        </div>
+
+        <mat-divider class="my-4"></mat-divider>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- City -->
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>City of Residence</mat-label>
+            <mat-select [formField]="calcForm.city">
+              @for (c of cities; track c) {
+              <mat-option [value]="c">{{ c }}</mat-option>
+              }
+            </mat-select>
+            <mat-hint class="text-red-500">
+              @if (city().errors() && city().touched()) {
+              @for (error of city().errors(); track error.kind) { {{ error.message }} }
+              }
+            </mat-hint>
+          </mat-form-field>
+
+          <!-- Occupation -->
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Occupation</mat-label>
+            <mat-select [formField]="calcForm.occupation">
+              @for (o of occupations; track o) {
+              <mat-option [value]="o">{{ o }}</mat-option>
+              }
+            </mat-select>
+            <mat-hint class="text-red-500">
+              @if (occupation().errors() && occupation().touched()) {
+              @for (error of occupation().errors(); track error.kind) { {{ error.message }} }
+              }
+            </mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!-- Smoker Status -->
+        <div class="mt-2 p-4 bg-slate-50 border border-slate-200 rounded-xl">
+          <label class="block text-slate-700 font-semibold mb-2">Have you ever consumed tobacco or smoked?</label>
+          <mat-radio-group [formField]="calcForm.isSmoker" class="flex gap-6">
+            <mat-radio-button value="yes" color="primary">Yes</mat-radio-button>
+            <mat-radio-button value="no" color="primary">No</mat-radio-button>
+          </mat-radio-group>
+          @if (!isSmoker().valid() && isSmoker().touched()) {
+          <p class="text-red-500 text-xs font-medium mt-2">Please select an option.</p>
+          }
+        </div>
+
+        <div class="mt-8 flex justify-center">
+          <button mat-flat-button color="primary" type="submit" [disabled]="!calcForm().valid()"
+            class="w-full md:w-auto px-16 py-6 text-xl">
+            Calculate Premium
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  </section>
+</main>
