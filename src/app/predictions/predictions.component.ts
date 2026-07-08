@@ -1,5 +1,5 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
-import { CommonModule, DatePipe, PercentPipe } from '@angular/common';
+import { CommonModule, DatePipe, PercentPipe, CurrencyPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { MatCardModule } from '@angular/material/card';
@@ -10,31 +10,34 @@ import { RouterLink } from '@angular/router';
 export interface PredictionHistory {
   id?: number;
   predicted_category: string;
+  predicted_premium?: number;
   confidence: number;
   created_at?: string;
-  age?: number;
-  city?: string;
+  age_group?: string;
+  city_tier?: number;
   occupation?: string;
   income_lpa?: number;
+  lifestyle_risk?: string;
 }
 
 @Component({
   selector: 'app-predictions',
   standalone: true,
   imports: [
-    CommonModule, 
-    MatCardModule, 
-    MatProgressSpinnerModule, 
-    MatButtonModule, 
+    CommonModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    MatButtonModule,
     RouterLink,
     DatePipe,
-    PercentPipe
+    PercentPipe,
+    CurrencyPipe
   ],
   templateUrl: './predictions.html',
 })
 export class PredictionsComponent implements OnInit {
   private http = inject(HttpClient);
-  
+
   predictions = signal<PredictionHistory[]>([]);
   isLoading = signal<boolean>(true);
   errorMessage = signal<string>('');
@@ -46,7 +49,7 @@ export class PredictionsComponent implements OnInit {
   fetchHistory() {
     this.isLoading.set(true);
     this.errorMessage.set('');
-    
+
     // We assume the interceptor will attach the token
     this.http.get<PredictionHistory[]>(`${environment.apiUrl}/predictions/me`).subscribe({
       next: (data) => {

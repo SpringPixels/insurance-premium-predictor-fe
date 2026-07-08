@@ -12,12 +12,14 @@ export class AuthService {
 
   isLoggedIn = signal<boolean>(false);
   isAdmin = signal<boolean>(false);
+  isPaid = signal<boolean>(false);
   email = signal<string | null>(null);
   fullName = signal<string | null>(null);
 
   private readonly tokenKey = 'token';
   private readonly emailKey = 'email';
   private readonly adminKey = 'admin';
+  private readonly paidKey = 'paid';
   private readonly nameKey = 'full_name';
 
   constructor() {
@@ -33,6 +35,9 @@ export class AuthService {
 
       const savedAdmin = localStorage.getItem(this.adminKey);
       if (savedAdmin === 'true') this.isAdmin.set(true);
+
+      const savedPaid = localStorage.getItem(this.paidKey);
+      if (savedPaid === 'true') this.isPaid.set(true);
     }
   }
 
@@ -66,12 +71,16 @@ export class AuthService {
         const isUserAdmin = profile && profile.role === 'admin';
         this.isAdmin.set(isUserAdmin);
         
+        const isUserPaid = profile && (profile.is_paid || profile.paid_member || profile.paid);
+        this.isPaid.set(!!isUserPaid);
+        
         if (profile && profile.full_name) {
           this.fullName.set(profile.full_name);
         }
 
         if (typeof window !== 'undefined') {
           localStorage.setItem(this.adminKey, isUserAdmin ? 'true' : 'false');
+          localStorage.setItem(this.paidKey, isUserPaid ? 'true' : 'false');
           if (profile && profile.full_name) {
             localStorage.setItem(this.nameKey, profile.full_name);
           }
@@ -83,12 +92,14 @@ export class AuthService {
   logout() {
     this.isLoggedIn.set(false);
     this.isAdmin.set(false);
+    this.isPaid.set(false);
     this.email.set(null);
     this.fullName.set(null);
     if (typeof window !== 'undefined') {
       localStorage.removeItem(this.tokenKey);
       localStorage.removeItem(this.emailKey);
       localStorage.removeItem(this.adminKey);
+      localStorage.removeItem(this.paidKey);
       localStorage.removeItem(this.nameKey);
     }
   }

@@ -102,10 +102,15 @@ export class CalculatorComponent {
         occupation: data.occupation
       };
 
-      this.http.post<PredictionResponse>(`${environment.apiUrl}/predict/explain`, payload).subscribe({
+      this.http.post<any>(`${environment.apiUrl}/predict/explain`, payload).subscribe({
         next: (response) => {
           this.isLoading.set(false);
-          this.state.setResult(data.name, response);
+          const mappedPrediction: PredictionResponse = {
+            predicted_category: response.prediction_results?.predicted_category || response.predicted_category,
+            confidence: response.prediction_results?.confidence_score || response.confidence,
+            class_probabilities: response.prediction_results?.all_class_probabilities || response.class_probabilities
+          };
+          this.state.setResult(data.name, mappedPrediction);
           this.router.navigate(['/calculator/results']);
         },
         error: (err) => {

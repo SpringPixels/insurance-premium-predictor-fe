@@ -61,16 +61,16 @@
                 </div>
                 
                 <div class="flex flex-wrap gap-x-8 gap-y-3 text-slate-700">
-                  @if (item.age) {
+                  @if (item.age_group) {
                     <div>
                       <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Age</span>
-                      <span class="font-semibold">{{ item.age }} years</span>
+                      <span class="font-semibold">{{ item.age_group | titlecase }}</span>
                     </div>
                   }
-                  @if (item.city) {
+                  @if (item.city_tier !== undefined) {
                     <div>
                       <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">City</span>
-                      <span class="font-semibold">{{ item.city }}</span>
+                      <span class="font-semibold">Tier {{ item.city_tier }}</span>
                     </div>
                   }
                   @if (item.occupation) {
@@ -93,7 +93,7 @@
                   {{ item.predicted_category }}
                 </span>
                 <span class="text-sm text-slate-500 font-medium">
-                  {{ item.confidence | percent:'1.1-2' }} Confidence
+                  {{ item.predicted_premium ? (item.predicted_premium | currency:'INR') : 'Premium N/A' }}
                 </span>
               </div>
               
