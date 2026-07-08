@@ -9,9 +9,23 @@
     <a routerLink="/coverage" class="font-semibold text-slate-600 hover:text-blue-700 transition-colors">Insurance Plans</a>
     <a routerLink="/contact" class="font-semibold text-slate-600 hover:text-blue-700 transition-colors">Contact</a>
   </nav>
-  <div class="hidden md:block">
-    <a routerLink="/login" class="px-6 py-2.5 text-sm font-bold text-blue-700 bg-blue-50 border-2 border-blue-100 hover:bg-blue-100 rounded-full transition-all">
-      Member Login
-    </a>
+  <div class="hidden md:flex items-center gap-4">
+    @if (authService.isLoggedIn()) {
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-medium text-slate-600">
+          Hello, <span class="font-bold text-blue-700">{{ authService.email() || 'User' }}</span>
+          @if (authService.isAdmin()) {
+            <span class="ml-1 inline-block px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-bold rounded-full">ADMIN</span>
+          }
+        </span>
+        <button (click)="logout()" class="px-5 py-2 text-sm font-bold text-slate-600 hover:text-red-600 border border-slate-200 hover:border-red-200 hover:bg-red-50 rounded-full transition-all">
+          Logout
+        </button>
+      </div>
+    } @else {
+      <a routerLink="/login" class="px-6 py-2.5 text-sm font-bold text-blue-700 bg-blue-50 border-2 border-blue-100 hover:bg-blue-100 rounded-full transition-all">
+        Member Login
+      </a>
+    }
   </div>
 </header>

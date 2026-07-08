@@ -45,6 +45,7 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 
 - Keep templates simple and avoid complex logic
 - Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
+- Always use `(submit)` instead of `(ngSubmit)` for forms
 - Use the async pipe to handle observables
 - Do not assume globals like (`new Date()`) are available.
 
