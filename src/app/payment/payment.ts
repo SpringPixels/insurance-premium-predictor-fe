@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -24,7 +24,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   ],
   templateUrl: './payment.html'
 })
-export class PaymentComponent {
+export class Payment implements OnInit {
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
   private router = inject(Router);
@@ -32,13 +32,17 @@ export class PaymentComponent {
   private auth = inject(AuthService);
   private apiError = inject(ApiErrorService);
 
+  // Use a signal so it can update asynchronously
+  fetchedAmount = signal(0);
+  
   get amount(): number {
-    return this.state.prediction()?.predicted_premium || 0;
+    return this.state.prediction()?.predicted_premium || this.fetchedAmount();
   }
 
   isProcessing = signal(false);
   errorMessage = signal('');
   successMessage = signal('');
+  isLoading = signal(true);
 
   paymentForm = this.fb.group({
     cardName: ['', Validators.required],
@@ -46,6 +50,36 @@ export class PaymentComponent {
     expiry: ['', [Validators.required, Validators.pattern(/^(0[1-9]|1[0-2])\/?([0-9]{2})$/)]],
     cvv: ['', [Validators.required, Validators.pattern(/^[0-9]{3,4}$/)]]
   });
+
+  ngOnInit() {
+    if (this.amount > 0) {
+      this.isLoading.set(false);
+      return;
+    }
+    
+    // Fetch last prediction if amount is 0
+    if (typeof window !== 'undefined') {
+      this.http.get<any[]>(`${environment.apiUrl}/predictions/me`).subscribe({
+        next: (res) => {
+          if (res && res.length > 0) {
+            // Sort to get the latest prediction
+            res.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+            this.fetchedAmount.set(res[0].predicted_premium);
+            this.isLoading.set(false);
+          } else {
+            // No predictions found, redirect to calculator
+            this.router.navigate(['/calculator']);
+          }
+        },
+        error: (err) => {
+          console.error('Failed to fetch predictions', err);
+          this.router.navigate(['/calculator']);
+        }
+      });
+    } else {
+      this.isLoading.set(false);
+    }
+  }
 
   processPayment() {
     if (this.paymentForm.valid) {

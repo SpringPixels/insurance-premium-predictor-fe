@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
@@ -23,6 +23,18 @@ export class ApiErrorService {
         })
         .filter(Boolean)
         .join('; ') || fallback;
+    }
+
+    // New structured errors format: { detail: "...", errors: { field_name: "message" } }
+    if (err.error?.errors && typeof err.error.errors === 'object') {
+      const errorMessages = Object.entries(err.error.errors)
+        .map(([field, msg]) => {
+          const cleanField = field.charAt(0).toUpperCase() + field.replace(/_/g, ' ').slice(1);
+          return `${cleanField}: ${msg}`;
+        });
+      if (errorMessages.length > 0) {
+        return errorMessages.join('; ');
+      }
     }
 
     // FastAPI HTTPException: detail is a plain string

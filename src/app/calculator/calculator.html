@@ -45,7 +45,11 @@
           <!-- Name -->
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>Full Name</mat-label>
-            <input matInput [formField]="calcForm.name" type="text" placeholder="e.g. John Doe" />
+            @if (hasPrefilledName()) {
+              <input matInput type="text" [value]="calcModel().name" readonly class="text-slate-500" />
+            } @else {
+              <input matInput [formField]="calcForm.name" type="text" placeholder="e.g. John Doe" />
+            }
             <mat-hint class="text-red-500">
               @if (name().errors() && name().touched()) {
               @for (error of name().errors(); track error.kind) { {{ error.message }} }

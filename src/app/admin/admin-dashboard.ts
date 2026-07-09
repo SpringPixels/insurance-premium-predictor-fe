@@ -97,7 +97,7 @@ import { ApiErrorService } from '../api-error.service';
     }
   `]
 })
-export class AdminDashboardComponent implements OnInit {
+export class AdminDashboard implements OnInit {
   private http = inject(HttpClient);
   private snackBar = inject(MatSnackBar);
   private apiError = inject(ApiErrorService);

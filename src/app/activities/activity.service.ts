@@ -24,6 +24,14 @@ export interface SegmentResponse {
   goal: string;
 }
 
+export interface ActivityHistoryItem {
+  id: number;
+  date: string;
+  activity_type: string | null;
+  is_recommended: boolean;
+  created_at: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,6 +43,15 @@ export class ActivityService {
 
   private _streakData = signal<StreakResponse | null>(null);
   public streakData = this._streakData.asReadonly();
+
+  private _activityHistory = signal<ActivityHistoryItem[]>([]);
+  public activityHistory = this._activityHistory.asReadonly();
+
+  private _hasMoreHistory = signal<boolean>(true);
+  public hasMoreHistory = this._hasMoreHistory.asReadonly();
+
+  private _genericSuggestions = signal<string[]>(['30-min Walk', 'Yoga', '15-min Stretch']);
+  public genericSuggestions = this._genericSuggestions.asReadonly();
 
   public currentStreak = computed(() => this._streakData()?.current_streak || 0);
   public last7Days = computed(() => this._streakData()?.last_7_days || []);
@@ -49,13 +66,38 @@ export class ActivityService {
   });
 
   public loadStreak() {
+    if (typeof window === 'undefined') return;
     this.http.get<StreakResponse>(`${environment.apiUrl}/activity/streak`).subscribe({
       next: (res) => this._streakData.set(res),
       error: (err) => console.error('Error fetching streak', err)
     });
   }
 
+  public loadHistory(offset: number = 0, limit: number = 20, append: boolean = false) {
+    if (typeof window === 'undefined') return;
+    this.http.get<ActivityHistoryItem[]>(`${environment.apiUrl}/activity/history?offset=${offset}&limit=${limit}`).subscribe({
+      next: (res) => {
+        if (append) {
+          this._activityHistory.update(current => [...current, ...res]);
+        } else {
+          this._activityHistory.set(res);
+        }
+        this._hasMoreHistory.set(res.length === limit);
+      },
+      error: (err) => console.error('Error fetching history', err)
+    });
+  }
+
+  public loadSuggestions() {
+    if (typeof window === 'undefined') return;
+    this.http.get<string[]>(`${environment.apiUrl}/activity/suggestions`).subscribe({
+      next: (res) => this._genericSuggestions.set(res),
+      error: (err) => console.error('Error fetching suggestions', err)
+    });
+  }
+
   public loadRecommendation() {
+    if (typeof window === 'undefined') return;
     // 1. Fetch latest prediction for this user
     this.http.get<any[]>(`${environment.apiUrl}/predictions/me`).pipe(
       switchMap((predictions) => {
@@ -86,14 +128,13 @@ export class ActivityService {
     });
   }
 
-  public checkIn(activityType: string) {
-    if (this.hasCheckedInToday()) {
-      return; 
-    }
-    this.http.post(`${environment.apiUrl}/activity/checkin`, { activity_type: activityType }).subscribe({
+  public checkIn(activityType: string, isRecommended: boolean = false) {
+    this.http.post(`${environment.apiUrl}/activity/checkin`, { activity_type: activityType, is_recommended: isRecommended }).subscribe({
       next: () => {
-        // Reload streak to reflect check-in
+        // Reload everything to reflect check-in
         this.loadStreak();
+        this.loadHistory();
+        this.loadSuggestions();
       },
       error: (err) => console.error('Error checking in', err)
     });

@@ -6,10 +6,10 @@ import { AuthService } from '../auth.service';
   selector: 'app-home',
   standalone: true,
   imports: [RouterLink],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  templateUrl: './home.html',
+  styleUrl: './home.css'
 })
-export class HomeComponent {
+export class Home {
   authService = inject(AuthService);
   router = inject(Router);
 

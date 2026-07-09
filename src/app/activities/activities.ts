@@ -25,7 +25,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
   ],
   templateUrl: './activities.html',
 })
-export class ActivitiesComponent implements OnInit {
+export class Activities implements OnInit {
   private activityService = inject(ActivityService);
   private fb = inject(FormBuilder);
 
@@ -34,24 +34,20 @@ export class ActivitiesComponent implements OnInit {
   public recommendedActivity = this.activityService.recommendedActivity;
   public streakMessage = this.activityService.streakMessage;
   public last7Days = this.activityService.last7Days;
+  public activityHistory = this.activityService.activityHistory;
+  public genericSuggestions = this.activityService.genericSuggestions;
 
   public checkInForm = this.fb.group({
     activityType: ['', Validators.required]
   });
 
-  constructor() {
-    // When recommendation changes, update the form if it's empty
-    effect(() => {
-      const rec = this.recommendedActivity();
-      if (rec && !this.checkInForm.value.activityType) {
-        this.checkInForm.patchValue({ activityType: rec });
-      }
-    });
-  }
+  constructor() {}
 
   ngOnInit() {
     this.activityService.loadStreak();
     this.activityService.loadRecommendation();
+    this.activityService.loadHistory();
+    this.activityService.loadSuggestions();
   }
 
   // UI mapping for the calendar
@@ -68,17 +64,42 @@ export class ActivitiesComponent implements OnInit {
   });
 
   public thisMonthCount = computed(() => {
-    const list = this.last7Days();
+    const list = this.activityHistory();
     const currentMonth = new Date().getMonth();
-    // Note: The backend only returns the last 7 days currently, 
-    // so this is a simplified monthly count. If the backend returned full history, this would be more accurate.
-    // For now, it just counts the workouts in the returned list that fall in this month.
-    return list.filter(c => c.completed && new Date(c.date).getMonth() === currentMonth).length;
+    return list.filter(c => new Date(c.created_at).getMonth() === currentMonth).length;
   });
 
+  public hasMoreHistory = this.activityService.hasMoreHistory;
+
+  public groupedHistory = computed(() => {
+    const list = this.activityHistory();
+    const groups: { date: string, items: any[] }[] = [];
+    
+    list.forEach(item => {
+      const dateStr = item.date;
+      let group = groups.find(g => g.date === dateStr);
+      if (!group) {
+        group = { date: dateStr, items: [] };
+        groups.push(group);
+      }
+      group.items.push(item);
+    });
+    
+    return groups;
+  });
+
+  loadMore() {
+    this.activityService.loadHistory(this.activityHistory().length, 20, true);
+  }
+
+  logSuggestion(activity: string, isRecommended: boolean = true) {
+    this.activityService.checkIn(activity, isRecommended);
+  }
+
   submitCheckIn() {
-    if (this.checkInForm.valid && !this.hasCheckedInToday()) {
-      this.activityService.checkIn(this.checkInForm.value.activityType!);
+    if (this.checkInForm.valid) {
+      this.activityService.checkIn(this.checkInForm.value.activityType!, false);
+      this.checkInForm.reset();
     }
   }
 }

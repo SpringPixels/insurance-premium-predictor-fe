@@ -39,10 +39,23 @@ import { ApiErrorService } from '../api-error.service';
           </td>
         </ng-container>
 
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef> Status </th>
+          <td mat-cell *matCellDef="let user">
+            <span [class.active-status]="user.is_active" [class.banned-status]="!user.is_active">
+              {{ user.is_active ? 'Active' : 'Banned' }}
+            </span>
+          </td>
+        </ng-container>
+
         <!-- Actions Column -->
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef> Actions </th>
           <td mat-cell *matCellDef="let user">
+            <button mat-button [color]="user.is_active ? 'warn' : 'primary'" (click)="updateStatus(user.id, !user.is_active)">
+              {{ user.is_active ? 'Ban' : 'Unban' }}
+            </button>
             <button mat-button color="warn" (click)="deleteUser(user.id)">Delete</button>
           </td>
         </ng-container>
@@ -59,15 +72,23 @@ import { ApiErrorService } from '../api-error.service';
     table {
       width: 100%;
     }
+    .active-status {
+      color: green;
+      font-weight: 500;
+    }
+    .banned-status {
+      color: red;
+      font-weight: 500;
+    }
   `]
 })
-export class AdminUsersComponent implements OnInit {
+export class AdminUsers implements OnInit {
   private http = inject(HttpClient);
   private snackBar = inject(MatSnackBar);
   private apiError = inject(ApiErrorService);
 
   users = signal<any[]>([]);
-  displayedColumns: string[] = ['id', 'email', 'role', 'actions'];
+  displayedColumns: string[] = ['id', 'email', 'role', 'status', 'actions'];
 
   ngOnInit() {
     this.loadUsers();
@@ -85,6 +106,16 @@ export class AdminUsersComponent implements OnInit {
     this.http.patch(`${environment.apiUrl}/admin/users/${userId}/role`, { role: newRole }).subscribe({
       next: () => this.snackBar.open('Role updated', 'Close', { duration: 3000 }),
       error: (err) => this.showError(this.apiError.getMessage(err, 'Failed to update role'))
+    });
+  }
+
+  updateStatus(userId: number, isActive: boolean) {
+    this.http.patch(`${environment.apiUrl}/admin/users/${userId}/status`, { is_active: isActive }).subscribe({
+      next: () => {
+        this.snackBar.open(isActive ? 'User unbanned' : 'User banned', 'Close', { duration: 3000 });
+        this.loadUsers();
+      },
+      error: (err) => this.showError(this.apiError.getMessage(err, 'Failed to update user status'))
     });
   }
 

@@ -11,7 +11,7 @@ import { AuthService } from '../auth.service';
   imports: [CommonModule, RouterModule, PercentPipe, KeyValuePipe, CurrencyPipe, MatCardModule, MatButtonModule],
   templateUrl: './calculator-results.html'
 })
-export class CalculatorResultsComponent {
+export class CalculatorResults {
   private state = inject(CalculatorStateService);
   private router = inject(Router);
   authService = inject(AuthService);

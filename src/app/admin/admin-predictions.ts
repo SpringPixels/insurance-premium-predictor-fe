@@ -57,7 +57,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     }
   `]
 })
-export class AdminPredictionsComponent implements OnInit {
+export class AdminPredictions implements OnInit {
   private http = inject(HttpClient);
   private snackBar = inject(MatSnackBar);
 

@@ -54,3 +54,16 @@ export const adminGuard: CanActivateFn = () => {
   }
   return router.parseUrl('/');
 };
+
+// Guard to protect paid-member-only routes
+export const paidGuard: CanActivateFn = () => {
+  if (typeof window === 'undefined') return true;
+
+  const auth = inject(AuthService);
+  const router = inject(Router);
+
+  if (auth.isLoggedIn() && auth.isPaid()) {
+    return true;
+  }
+  return router.parseUrl('/payment');
+};

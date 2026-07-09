@@ -63,7 +63,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     }
   `]
 })
-export class AdminContactComponent implements OnInit {
+export class AdminContact implements OnInit {
   private http = inject(HttpClient);
   private snackBar = inject(MatSnackBar);
 

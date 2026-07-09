@@ -35,7 +35,7 @@ export interface PredictionHistory {
   ],
   templateUrl: './predictions.html',
 })
-export class PredictionsComponent implements OnInit {
+export class Predictions implements OnInit {
   private http = inject(HttpClient);
   private apiError = inject(ApiErrorService);
 
@@ -48,6 +48,7 @@ export class PredictionsComponent implements OnInit {
   }
 
   fetchHistory() {
+    if (typeof window === 'undefined') return;
     this.isLoading.set(true);
     this.errorMessage.set('');
 

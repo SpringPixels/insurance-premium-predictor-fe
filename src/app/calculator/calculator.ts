@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -13,6 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { form, FormField, required, min, FormRoot } from '@angular/forms/signals';
 import { CalculatorStateService, PredictionResponse } from './calculator-state.service';
 import { ApiErrorService } from '../api-error.service';
+import { AuthService } from '../auth.service';
 import { environment } from '../../environments/environment';
 
 interface CalculatorData {
@@ -44,11 +45,12 @@ interface CalculatorData {
   templateUrl: './calculator.html',
   styleUrl: './calculator.css',
 })
-export class CalculatorComponent {
+export class Calculator implements OnInit {
   private router = inject(Router);
   private state = inject(CalculatorStateService);
   private http = inject(HttpClient);
   private apiError = inject(ApiErrorService);
+  public auth = inject(AuthService);
 
   tier1Cities = ['Mumbai', 'Delhi', 'Bengaluru', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune'];
   tier2Cities = [
@@ -88,6 +90,36 @@ export class CalculatorComponent {
     city: '',
     occupation: '',
   });
+
+  hasPrefilledName = signal<boolean>(false);
+
+  ngOnInit() {
+    const authName = this.auth.fullName();
+    if (authName) {
+      this.calcModel.update(m => ({ ...m, name: authName }));
+      this.hasPrefilledName.set(true);
+    }
+
+    if (this.auth.isLoggedIn()) {
+      this.http.get<any>(`${environment.apiUrl}/me`).subscribe({
+        next: (profile) => {
+          if (profile) {
+            this.calcModel.update(m => ({
+              ...m,
+              age: profile.age ?? m.age,
+              weight: profile.weight ?? m.weight,
+              height: profile.height ?? m.height,
+              incomeLpa: profile.income_lpa ?? m.incomeLpa,
+              isSmoker: profile.is_smoker === true ? 'yes' : (profile.is_smoker === false ? 'no' : m.isSmoker),
+              city: profile.city ?? m.city,
+              occupation: profile.occupation ?? m.occupation
+            }));
+          }
+        },
+        error: (err) => console.error('Failed to load user profile', err)
+      });
+    }
+  }
 
   isLoading = signal<boolean>(false);
   errorMessage = signal<string>('');

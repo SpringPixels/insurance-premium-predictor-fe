@@ -51,4 +51,4 @@ import { MatTabsModule } from '@angular/material/tabs';
     }
   `]
 })
-export class AdminComponent {}
+export class Admin {}

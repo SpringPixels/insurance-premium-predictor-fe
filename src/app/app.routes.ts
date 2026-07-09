@@ -1,30 +1,30 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import { CoverageComponent } from './coverage/coverage.component';
-import { guestGuard, loggedInGuard, calculatorResultsGuard, adminGuard } from './app.guards';
+import { Home } from './home/home';
+import { Coverage } from './coverage/coverage';
+import { guestGuard, loggedInGuard, calculatorResultsGuard, adminGuard, paidGuard } from './app.guards';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent },
-  { path: 'coverage', component: CoverageComponent },
+  { path: 'home', component: Home },
+  { path: 'coverage', component: Coverage },
   { path: 'login', loadComponent: () => import('./login/login').then(m => m.Login), canActivate: [guestGuard] },
   { path: 'register', loadComponent: () => import('./register/register').then(m => m.Register), canActivate: [guestGuard] },
-  { path: 'contact', loadComponent: () => import('./contact/contact.component').then(m => m.ContactComponent) },
-  { path: 'calculator', loadComponent: () => import('./calculator/calculator.component').then(m => m.CalculatorComponent), canActivate: [loggedInGuard] },
-  { path: 'calculator/results', loadComponent: () => import('./calculator/calculator-results.component').then(m => m.CalculatorResultsComponent), canActivate: [calculatorResultsGuard, loggedInGuard] },
-  { path: 'predictions', loadComponent: () => import('./predictions/predictions.component').then(m => m.PredictionsComponent), canActivate: [loggedInGuard] },
-  { path: 'activities', loadComponent: () => import('./activities/activities.component').then(m => m.ActivitiesComponent), canActivate: [loggedInGuard] },
-  { path: 'payment', loadComponent: () => import('./payment/payment.component').then(m => m.PaymentComponent), canActivate: [loggedInGuard] },
+  { path: 'contact', loadComponent: () => import('./contact/contact').then(m => m.Contact) },
+  { path: 'calculator', loadComponent: () => import('./calculator/calculator').then(m => m.Calculator), canActivate: [loggedInGuard] },
+  { path: 'calculator/results', loadComponent: () => import('./calculator/calculator-results').then(m => m.CalculatorResults), canActivate: [calculatorResultsGuard, loggedInGuard] },
+  { path: 'predictions', loadComponent: () => import('./predictions/predictions').then(m => m.Predictions), canActivate: [loggedInGuard] },
+  { path: 'activities', loadComponent: () => import('./activities/activities').then(m => m.Activities), canActivate: [loggedInGuard, paidGuard] },
+  { path: 'payment', loadComponent: () => import('./payment/payment').then(m => m.Payment), canActivate: [loggedInGuard] },
   { 
     path: 'admin', 
-    loadComponent: () => import('./admin/admin.component').then(m => m.AdminComponent), 
+    loadComponent: () => import('./admin/admin').then(m => m.Admin), 
     canActivate: [adminGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', loadComponent: () => import('./admin/admin-dashboard.component').then(m => m.AdminDashboardComponent) },
-      { path: 'users', loadComponent: () => import('./admin/admin-users.component').then(m => m.AdminUsersComponent) },
-      { path: 'predictions', loadComponent: () => import('./admin/admin-predictions.component').then(m => m.AdminPredictionsComponent) },
-      { path: 'contact-us', loadComponent: () => import('./admin/admin-contact.component').then(m => m.AdminContactComponent) }
+      { path: 'dashboard', loadComponent: () => import('./admin/admin-dashboard').then(m => m.AdminDashboard) },
+      { path: 'users', loadComponent: () => import('./admin/admin-users').then(m => m.AdminUsers) },
+      { path: 'predictions', loadComponent: () => import('./admin/admin-predictions').then(m => m.AdminPredictions) },
+      { path: 'contact-us', loadComponent: () => import('./admin/admin-contact').then(m => m.AdminContact) }
     ]
   },
   { path: '**', redirectTo: 'home' }

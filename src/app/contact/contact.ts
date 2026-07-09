@@ -34,7 +34,7 @@ interface ContactData {
   templateUrl: './contact.html',
   styleUrl: './contact.css',
 })
-export class ContactComponent {
+export class Contact {
   private http = inject(HttpClient);
 
   contactModel = signal<ContactData>({

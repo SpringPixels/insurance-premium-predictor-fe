@@ -5,112 +5,118 @@
       <p class="text-slate-500">Complete your premium plan subscription</p>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      
-      <!-- Payment Form -->
-      <div class="lg:col-span-2">
-        <mat-card class="p-8 rounded-3xl shadow-sm border border-slate-200 bg-white">
-          <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-            </svg>
-            Payment Details
-          </h2>
-          
-          @if (successMessage()) {
-            <div class="bg-green-50 text-green-700 p-6 rounded-2xl border border-green-200 flex items-center gap-4 mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    @if (isLoading()) {
+      <div class="flex justify-center items-center py-20">
+        <mat-spinner diameter="48"></mat-spinner>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Payment Form -->
+        <div class="lg:col-span-2">
+          <mat-card class="p-8 rounded-3xl shadow-sm border border-slate-200 bg-white">
+            <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
               </svg>
-              <div>
-                <p class="font-bold text-lg">Payment Successful!</p>
-                <p class="text-sm">You are being redirected...</p>
-              </div>
-            </div>
-          } @else {
-            <form [formGroup]="paymentForm" (submit)="processPayment()" class="flex flex-col gap-6">
-              @if (errorMessage()) {
-                <div class="bg-red-50 text-red-600 p-4 rounded-xl border border-red-200 font-medium">
-                  {{ errorMessage() }}
+              Payment Details
+            </h2>
+            
+            @if (successMessage()) {
+              <div class="bg-green-50 text-green-700 p-6 rounded-2xl border border-green-200 flex items-center gap-4 mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <p class="font-bold text-lg">Payment Successful!</p>
+                  <p class="text-sm">You are being redirected...</p>
                 </div>
-              }
-
-              <div class="flex flex-col gap-2">
-                <label class="text-sm font-bold text-slate-700">Name on Card</label>
-                <input type="text" formControlName="cardName" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all" placeholder="John Doe">
               </div>
+            } @else {
+              <form [formGroup]="paymentForm" (submit)="processPayment()" class="flex flex-col gap-6">
+                @if (errorMessage()) {
+                  <div class="bg-red-50 text-red-600 p-4 rounded-xl border border-red-200 font-medium">
+                    {{ errorMessage() }}
+                  </div>
+                }
 
-              <div class="flex flex-col gap-2">
-                <label class="text-sm font-bold text-slate-700">Card Number</label>
-                <div class="relative">
-                  <input type="text" formControlName="cardNumber" maxlength="16" class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-mono" placeholder="0000 0000 0000 0000">
-                  <div class="absolute left-4 top-1/2 -translate-y-1/2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                    </svg>
+                <div class="flex flex-col gap-2">
+                  <label class="text-sm font-bold text-slate-700">Name on Card</label>
+                  <input type="text" formControlName="cardName" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all" placeholder="John Doe">
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <label class="text-sm font-bold text-slate-700">Card Number</label>
+                  <div class="relative">
+                    <input type="text" formControlName="cardNumber" maxlength="16" class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-mono" placeholder="0000 0000 0000 0000">
+                    <div class="absolute left-4 top-1/2 -translate-y-1/2">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div class="grid grid-cols-2 gap-6">
-                <div class="flex flex-col gap-2">
-                  <label class="text-sm font-bold text-slate-700">Expiry (MM/YY)</label>
-                  <input type="text" formControlName="expiry" maxlength="5" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-mono" placeholder="MM/YY">
+                <div class="grid grid-cols-2 gap-6">
+                  <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold text-slate-700">Expiry (MM/YY)</label>
+                    <input type="text" formControlName="expiry" maxlength="5" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-mono" placeholder="MM/YY">
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold text-slate-700">CVV</label>
+                    <input type="text" formControlName="cvv" maxlength="4" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-mono" placeholder="123">
+                  </div>
                 </div>
-                <div class="flex flex-col gap-2">
-                  <label class="text-sm font-bold text-slate-700">CVV</label>
-                  <input type="text" formControlName="cvv" maxlength="4" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-mono" placeholder="123">
+
+                <button type="submit" [disabled]="isProcessing()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center h-14">
+                  @if (isProcessing()) {
+                    <mat-spinner diameter="24" class="mr-2"></mat-spinner> Processing...
+                  } @else {
+                    Pay {{ amount | currency:'INR' }}
+                  }
+                </button>
+              </form>
+            }
+          </mat-card>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="lg:col-span-1">
+          <div class="bg-blue-900 text-white rounded-3xl p-8 shadow-xl relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-800 to-transparent opacity-50"></div>
+            
+            <div class="relative z-10">
+              <h3 class="text-xl font-bold mb-6">Order Summary</h3>
+              
+              <div class="flex flex-col gap-4 border-b border-blue-800/50 pb-6 mb-6">
+                <div class="flex justify-between items-center">
+                  <span class="text-blue-200 text-sm">Premium Plan (Annual)</span>
+                  <span class="font-bold">{{ amount | currency:'INR' }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-blue-200 text-sm">Taxes & Fees</span>
+                  <span class="font-bold">₹0.00</span>
                 </div>
               </div>
-
-              <button type="submit" [disabled]="isProcessing()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center h-14">
-                @if (isProcessing()) {
-                  <mat-spinner diameter="24" class="mr-2"></mat-spinner> Processing...
-                } @else {
-                  Pay {{ amount | currency:'INR' }}
-                }
-              </button>
-            </form>
-          }
-        </mat-card>
-      </div>
-
-      <!-- Order Summary -->
-      <div class="lg:col-span-1">
-        <div class="bg-blue-900 text-white rounded-3xl p-8 shadow-xl relative overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-br from-blue-800 to-transparent opacity-50"></div>
-          
-          <div class="relative z-10">
-            <h3 class="text-xl font-bold mb-6">Order Summary</h3>
-            
-            <div class="flex flex-col gap-4 border-b border-blue-800/50 pb-6 mb-6">
-              <div class="flex justify-between items-center">
-                <span class="text-blue-200 text-sm">Premium Plan (Annual)</span>
-                <span class="font-bold">{{ amount | currency:'INR' }}</span>
+              
+              <div class="flex justify-between items-end mb-8">
+                <span class="text-blue-100 font-medium">Total Billed</span>
+                <span class="text-4xl font-black">{{ amount | currency:'INR' }}</span>
               </div>
-              <div class="flex justify-between items-center">
-                <span class="text-blue-200 text-sm">Taxes & Fees</span>
-                <span class="font-bold">₹0.00</span>
-              </div>
-            </div>
-            
-            <div class="flex justify-between items-end mb-8">
-              <span class="text-blue-100 font-medium">Total Billed</span>
-              <span class="text-4xl font-black">{{ amount | currency:'INR' }}</span>
-            </div>
-            
-            <div class="bg-white/10 rounded-2xl p-4 border border-white/10 backdrop-blur-sm">
-              <div class="flex gap-3 text-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-                <p class="text-blue-100">Guaranteed secure transaction with 256-bit encryption.</p>
+              
+              <div class="bg-white/10 rounded-2xl p-4 border border-white/10 backdrop-blur-sm">
+                <div class="flex gap-3 text-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  <p class="text-blue-100">Guaranteed secure transaction with 256-bit encryption.</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        
       </div>
-      
-    </div>
+    }
   </div>
 </main>

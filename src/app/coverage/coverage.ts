@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
   selector: 'app-coverage',
   standalone: true,
   imports: [RouterLink],
-  templateUrl: './coverage.component.html',
-  styleUrl: './coverage.component.css'
+  templateUrl: './coverage.html',
+  styleUrl: './coverage.css'
 })
-export class CoverageComponent {}
+export class Coverage {}
