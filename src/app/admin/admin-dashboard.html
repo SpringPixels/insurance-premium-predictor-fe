@@ -11,6 +11,15 @@
 
   <mat-card class="kpi-card">
     <mat-card-header>
+      <mat-card-title>Total Claims</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <h2 class="text-red-600">{{ dashboardData()?.total_claims | currency:'INR' }}</h2>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="kpi-card">
+    <mat-card-header>
       <mat-card-title>Total Users</mat-card-title>
     </mat-card-header>
     <mat-card-content>
